@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
+import com.example.chapter06.data.Repository
 import com.example.chapter06.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
@@ -81,7 +82,10 @@ class MainActivity : AppCompatActivity() {
                 cancellationTokenSource!!.token
             ).addOnSuccessListener { location ->
                 scope.launch {
+                    val monitoringStation =
+                        Repository.getNearbyMonitoringStation(location.latitude, location.longitude)
 
+                    binding.textView.text = monitoringStation?.stationName
                 }
             }
     }
