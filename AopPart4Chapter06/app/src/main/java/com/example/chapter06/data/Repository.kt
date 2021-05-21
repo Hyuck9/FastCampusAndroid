@@ -1,6 +1,7 @@
 package com.example.chapter06.data
 
 import com.example.chapter06.BuildConfig
+import com.example.chapter06.data.models.airquality.MeasuredValue
 import com.example.chapter06.data.models.monitoringstation.MonitoringStation
 import com.example.chapter06.data.services.AirKoreaApiService
 import com.example.chapter06.data.services.KakaoLocalApiService
@@ -30,6 +31,15 @@ object Repository {
             ?.monitoringStations
             ?.minByOrNull { it.tm ?: Double.MAX_VALUE }
     }
+
+    suspend fun getLatestAirQualityData(stationName: String):MeasuredValue? =
+        airKoreaApiService
+            .getRealtimeAirQualities(stationName)
+            .body()
+            ?.response
+            ?.body
+            ?.measuredValues
+            ?.firstOrNull()
 
     private val kakaoLocalApiService: KakaoLocalApiService by lazy {
         Retrofit.Builder()
