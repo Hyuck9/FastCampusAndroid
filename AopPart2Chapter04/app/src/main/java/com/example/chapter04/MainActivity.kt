@@ -1,5 +1,6 @@
 package com.example.chapter04
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
@@ -10,12 +11,15 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.view.isVisible
 import java.lang.NumberFormatException
 
 class MainActivity : AppCompatActivity() {
 
     private val expressionTextView: TextView by lazy { findViewById(R.id.expressionTextView) }
     private val resultTextView: TextView by lazy { findViewById(R.id.resultTextView) }
+    private val historyLayout: View by lazy { findViewById(R.id.historyLayout) }
+    private val historyLinearLayout: View by lazy { findViewById(R.id.historyLinearLayout) }
 
     private var isOperator = false
     private var hasOperator = false
@@ -65,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         resultTextView.text = calculateExpression()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun operatorButtonClicked(operator: String) {
         if (expressionTextView.text.isEmpty()) {
             return
@@ -155,8 +160,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun historyButtonClicked(v: View) {
+        historyLayout.isVisible = true
 
+        // TODO: 디비에서 모든 기록 가져오기
+        // TODO: 뷰에 모든 기록 할당하기
     }
+
+    fun closeHistoryButtonClicked(v: View) {
+        historyLayout.isVisible = false
+    }
+
+    fun historyClearButtonClicked(v: View) {
+        // TODO: 디비에서 모든 기록 삭제
+        // TODO: 뷰에서 모든 기록 삭제
+    }
+
 
 }
 
