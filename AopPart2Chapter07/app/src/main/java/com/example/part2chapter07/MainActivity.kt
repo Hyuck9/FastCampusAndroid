@@ -10,20 +10,23 @@ import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
 
+    private val soundVisualizerView: SoundVisualizerView by lazy { findViewById(R.id.soundVisualizerView) }
+    private val recordTimeTextView: CountUpView by lazy { findViewById(R.id.recordTimeTextView) }
     private val resetButton: Button by lazy { findViewById(R.id.resetButton) }
     private val recordButton: RecordButton by lazy { findViewById(R.id.recordButton) }
-    private val requiredPermissions = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE)
+    private val requiredPermissions =
+        arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE)
     private val recordingFilePath: String by lazy {
         "${externalCacheDir?.absolutePath}/recording.3gp"
     }
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
     private var state = State.BEFORE_RECORDING
-     set(value) {
-         field = value
-         resetButton.isEnabled = (value == State.AFTER_RECORDING || value == State.ON_PLAYING)
-         recordButton.updateIconWithState(value)
-     }
+        set(value) {
+            field = value
+            resetButton.isEnabled = (value == State.AFTER_RECORDING || value == State.ON_PLAYING)
+            recordButton.updateIconWithState(value)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         val audioRecordPermissionGranted =
             requestCode == REQUEST_RECORD_AUDIO_PERMISSION &&
-                grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+                    grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
 
         if (!audioRecordPermissionGranted) {
             finish()
@@ -60,6 +63,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
+        soundVisualizerView.onRequestCurrentAmplitude = {
+            recorder?.maxAmplitude ?: 0
+        }
         resetButton.setOnClickListener {
             stopPlaying()
             state = State.BEFORE_RECORDING
@@ -87,6 +93,8 @@ class MainActivity : AppCompatActivity() {
             prepare()
         }
         recorder?.start()
+        soundVisualizerView.startVisualizing(false)
+        recordTimeTextView.startCountUp()
         state = State.ON_RECONRDING
     }
 
@@ -96,6 +104,8 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
+        soundVisualizerView.stopVisualizing()
+        recordTimeTextView.stopCountUp()
         state = State.AFTER_RECORDING
     }
 
@@ -106,12 +116,16 @@ class MainActivity : AppCompatActivity() {
                 prepare()
             }
         player?.start()
+        soundVisualizerView.startVisualizing(true)
+        recordTimeTextView.startCountUp()
         state = State.ON_PLAYING
     }
 
     private fun stopPlaying() {
         player?.release()
         player = null
+        soundVisualizerView.stopVisualizing()
+        recordTimeTextView.stopCountUp()
         state = State.AFTER_RECORDING
     }
 
