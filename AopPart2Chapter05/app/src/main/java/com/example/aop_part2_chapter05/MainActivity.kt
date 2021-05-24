@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
     private val addPhotoButton: Button by lazy { findViewById(R.id.addPhotoButton) }
@@ -55,6 +56,17 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
             }
+        }
+    }
+
+    private fun initStartPhotoFrameModeButton() {
+        startPhotoFrameModeButton.setOnClickListener {
+            val intent = Intent(this, PhotoFrameActivity::class.java)
+            imageUriList.forEachIndexed {index, uri ->
+                intent.putExtra("photo$index", uri.toString())
+            }
+            intent.putExtra("photoListSize", imageUriList.size)
+            startActivity(intent)
         }
     }
 
@@ -127,7 +139,4 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun initStartPhotoFrameModeButton() {
-
-    }
 }
