@@ -1,4 +1,4 @@
-package com.example.chapter07
+package com.example.part2chapter07
 
 import org.junit.Test
 
