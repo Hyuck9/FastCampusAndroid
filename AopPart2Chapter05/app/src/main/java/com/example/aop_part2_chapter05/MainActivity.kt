@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("photoListSize", imageUriList.size)
             startActivity(intent)
         }
-    }
+    }asd
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
