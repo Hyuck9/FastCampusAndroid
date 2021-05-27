@@ -3,6 +3,7 @@ package com.example.part3chapter01
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
 
@@ -12,5 +13,16 @@ class MainActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
+
+		initFirebase()
+	}
+
+	private fun initFirebase() {
+		FirebaseMessaging.getInstance().token
+			.addOnCompleteListener { task ->
+				if (task.isSuccessful) {
+					firebaseTokenTextView.text = task.result
+				}
+			}
 	}
 }
