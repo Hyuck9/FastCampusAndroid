@@ -25,6 +25,9 @@ class HistoryAdapter(val historyDeleteClickedListener: (String) -> Unit): ListAd
 			binding.historyKeywordDeleteButton.setOnClickListener {
 				historyDeleteClickedListener(historyModel.keyword.orEmpty())
 			}
+			binding.root.setOnClickListener {
+				// TODO: 히스토리 아이템 클릭 시 바로 해당 키워드로 검색
+			}
 		}
 
 	}
