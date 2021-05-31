@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Aoppart3chapter04"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".DetailActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

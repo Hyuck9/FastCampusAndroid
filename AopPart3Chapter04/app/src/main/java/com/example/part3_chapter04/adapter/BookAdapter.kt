@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.part3_chapter04.databinding.ItemBookBinding
 import com.example.part3_chapter04.model.Book
 
-class BookAdapter: ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil) {
+class BookAdapter(private val itemClickedListener: (Book) -> Unit): ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil) {
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookItemViewHolder {
 		return BookItemViewHolder(ItemBookBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -23,6 +23,10 @@ class BookAdapter: ListAdapter<Book, BookAdapter.BookItemViewHolder>(diffUtil) {
 		fun bind(bookModel: Book) {
 			binding.titleTextView.text = bookModel.title
 			binding.descriptionTextView.text = bookModel.description
+
+			binding.root.setOnClickListener {
+				itemClickedListener(bookModel)
+			}
 
 			Glide
 				.with(binding.coverImageView.context)
