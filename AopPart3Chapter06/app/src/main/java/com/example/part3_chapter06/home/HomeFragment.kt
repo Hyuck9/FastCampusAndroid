@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.part3_chapter06.DBKey.Companion.DB_ARTICLES
 import com.example.part3_chapter06.R
 import com.example.part3_chapter06.databinding.FragmentHomeBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
@@ -50,12 +51,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 		binding.articleRecyclerView.layoutManager = LinearLayoutManager(context)
 		binding.articleRecyclerView.adapter = articleAdapter
 		binding.addFloatingButton.setOnClickListener {
-			// TODO: 로그인 기능 구현 후에 주석 지우기
-//			if (auth.currentUser != null) {
+			if (auth.currentUser != null) {
 				startActivity(Intent(requireActivity(), AddArticleActivity::class.java))
-//			} else {
-//				Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
-//			}
+			} else {
+				Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
+			}
 		}
 
 		articleDB.addChildEventListener(listener)
