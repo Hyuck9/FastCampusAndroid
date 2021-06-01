@@ -1,6 +1,7 @@
 package com.example.part3_chapter06.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -48,6 +49,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
 		binding.articleRecyclerView.layoutManager = LinearLayoutManager(context)
 		binding.articleRecyclerView.adapter = articleAdapter
+		binding.addFloatingButton.setOnClickListener {
+			// TODO: 로그인 기능 구현 후에 주석 지우기
+//			if (auth.currentUser != null) {
+				startActivity(Intent(requireActivity(), AddArticleActivity::class.java))
+//			} else {
+//				Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
+//			}
+		}
 
 		articleDB.addChildEventListener(listener)
 
