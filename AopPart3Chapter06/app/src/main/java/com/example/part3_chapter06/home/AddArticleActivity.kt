@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.example.part3_chapter06.DBKey
 import com.example.part3_chapter06.DBKey.Companion.DB_ARTICLES
 import com.example.part3_chapter06.R
@@ -57,12 +58,52 @@ class AddArticleActivity : AppCompatActivity() {
 			val price = binding.priceEditText.text.toString()
 			val sellerId = auth.currentUser?.uid.orEmpty()
 
+			showProgress()
+
+			if (selectedUri != null) {
+				val photoUri = selectedUri ?: return@setOnClickListener
+				uploadPhoto(
+					uri = photoUri,
+					successHandler = { uri -> uploadArticle(sellerId, title, price, uri) },
+					errorHandler = {
+						Toast.makeText(this, "사진 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
+						hideProgress()
+					}
+				)
+			} else {
+				uploadArticle(sellerId, title, price, "")
+			}
+
 			val model = ArticleModel(sellerId, title, System.currentTimeMillis(), "$price 원", "")
 			articleDB.push().setValue(model)
 
 			finish()
 		}
 	}
+
+	private fun uploadPhoto(uri: Uri, successHandler: (String) -> Unit, errorHandler: () -> Unit) {
+		val fileName = "${System.currentTimeMillis()}.png"
+		storage.reference.child("article/photo").child(fileName)
+			.putFile(uri)
+			.addOnCompleteListener { task ->
+				if (task.isSuccessful) {
+					storage.reference.child("article/photo").child(fileName)
+						.downloadUrl
+						.addOnSuccessListener { successHandler(it.toString()) }
+						.addOnFailureListener { errorHandler() }
+				} else {
+					errorHandler()
+				}
+			}
+	}
+
+	private fun uploadArticle(sellerId: String, title: String, price: String, imageUrl: String) {
+		val model = ArticleModel(sellerId, title, System.currentTimeMillis(), "$price 원", imageUrl)
+		articleDB.push().setValue(model)
+		hideProgress()
+		finish()
+	}
+
 
 	override fun onRequestPermissionsResult(
 		requestCode: Int,
@@ -85,6 +126,14 @@ class AddArticleActivity : AppCompatActivity() {
 		val intent = Intent(Intent.ACTION_GET_CONTENT)
 		intent.type = "image/*"
 		startActivityForResult(intent, 2020)
+	}
+
+	private fun showProgress() {
+		binding.progressBar.isVisible = true
+	}
+
+	private fun hideProgress() {
+		binding.progressBar.isVisible = false
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
