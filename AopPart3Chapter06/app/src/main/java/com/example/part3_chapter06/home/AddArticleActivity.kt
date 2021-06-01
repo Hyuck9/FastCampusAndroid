@@ -73,11 +73,6 @@ class AddArticleActivity : AppCompatActivity() {
 			} else {
 				uploadArticle(sellerId, title, price, "")
 			}
-
-			val model = ArticleModel(sellerId, title, System.currentTimeMillis(), "$price 원", "")
-			articleDB.push().setValue(model)
-
-			finish()
 		}
 	}
 
