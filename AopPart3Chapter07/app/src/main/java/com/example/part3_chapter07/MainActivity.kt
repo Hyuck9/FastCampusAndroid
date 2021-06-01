@@ -1,8 +1,11 @@
 package com.example.part3_chapter07
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -27,7 +30,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
 	private val viewPager: ViewPager2 by lazy { findViewById(R.id.houseViewPager) }
 	private val recyclerView: RecyclerView by lazy { findViewById(R.id.recyclerView) }
 	private val currentLocationButton: LocationButtonView by lazy { findViewById(R.id.currentLocationButton) }
-	private val viewPagerAdapter = HouseViewPagerAdapter()
+	private val viewPagerAdapter = HouseViewPagerAdapter(itemClicked = {
+		val intent = Intent().apply {
+			action = Intent.ACTION_SEND
+			putExtra(Intent.EXTRA_TEXT, "[지금 이 가격에 예약하세요!!] ${it.title} ${it.price} 사진보기 : ${it.imgUrl}")
+			type = "text/plain"
+		}
+		startActivity(Intent.createChooser(intent, null))
+	})
+	private val bottomSheetTitleTextView: TextView by lazy { findViewById(R.id.bottomSheetTitleTextView) }
 	private val recyclerAdapter = HouseListAdapter()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +89,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
 		retrofit.create(HouseService::class.java).also {
 			it.getHouseList()
 				.enqueue(object : Callback<HouseDto> {
+					@SuppressLint("SetTextI18n")
 					override fun onResponse(call: Call<HouseDto>, response: Response<HouseDto>) {
 						if (response.isSuccessful.not()) {
 							// 실패 처리에 대한 구현
@@ -88,6 +100,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
 							updateMarker(dto.items)
 							viewPagerAdapter.submitList(dto.items)
 							recyclerAdapter.submitList(dto.items)
+
+							bottomSheetTitleTextView.text = "${dto.items.size}개의 숙소"
 						}
 					}
 
