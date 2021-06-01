@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Aoppart3chapter06">
         <activity
+            android:name=".chatdetail.ChatRoomActivity"
+            android:exported="true" />
+        <activity
             android:name=".home.AddArticleActivity"
             android:exported="true" />
         <activity

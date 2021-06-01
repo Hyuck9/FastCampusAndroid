@@ -1,6 +1,7 @@
 package com.example.part3_chapter06.chatlist
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.part3_chapter06.DBKey.Companion.CHILD_CHAT
 import com.example.part3_chapter06.DBKey.Companion.DB_USERS
 import com.example.part3_chapter06.R
+import com.example.part3_chapter06.chatdetail.ChatRoomActivity
 import com.example.part3_chapter06.databinding.FragmentChatlistBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -32,8 +34,13 @@ class ChatListFragment : Fragment(R.layout.fragment_chatlist) {
 
 		binding = FragmentChatlistBinding.bind(view)
 
-		chatListAdapter = ChatListAdapter(onItemClicked = {
+		chatListAdapter = ChatListAdapter(onItemClicked = { chatRoom ->
 			// 채팅방으로 이동하는 코드
+			context?.let {
+				val intent = Intent(it, ChatRoomActivity::class.java)
+				intent.putExtra("chatKey", chatRoom.key)
+				startActivity(intent)
+			}
 		})
 
 		chatRoomList.clear()
