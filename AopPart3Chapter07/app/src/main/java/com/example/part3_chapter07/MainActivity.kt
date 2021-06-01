@@ -3,6 +3,7 @@ package com.example.part3_chapter07
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.viewpager2.widget.ViewPager2
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -16,9 +17,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
-	private val mapView: MapView by lazy { findViewById(R.id.mapView) }
 	private lateinit var naverMap: NaverMap
 	private lateinit var locationSource: FusedLocationSource
+	private val mapView: MapView by lazy { findViewById(R.id.mapView) }
+	private val viewPager: ViewPager2 by lazy { findViewById(R.id.houseViewPager) }
+	private val viewPagerAdapter = HouseViewPagerAdapter()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -26,6 +29,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 		mapView.onCreate(savedInstanceState)
 
 		mapView.getMapAsync(this)
+
+		viewPager.adapter = viewPagerAdapter
 	}
 
 	override fun onMapReady(map: NaverMap) {
@@ -62,6 +67,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 						response.body()?.let { dto ->
 							updateMarker(dto.items)
+							viewPagerAdapter.submitList(dto.items)
 						}
 					}
 
