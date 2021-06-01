@@ -8,6 +8,11 @@ import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -37,11 +42,47 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 		locationSource = FusedLocationSource(this@MainActivity, LOCATION_PERMISSION_REQUEST_CODE)
 		naverMap.locationSource = locationSource
 
-		val marker = Marker().apply {
-			this.position = LatLng(37.544854, 127.052214)
-			this.map = naverMap
-			this.icon = MarkerIcons.BLACK
-			this.iconTintColor = Color.RED
+		getHouseListFromAPI()
+	}
+
+	private fun getHouseListFromAPI() {
+		val retrofit = Retrofit.Builder()
+			.baseUrl("https://run.mocky.io")
+			.addConverterFactory(GsonConverterFactory.create())
+			.build()
+
+		retrofit.create(HouseService::class.java).also {
+			it.getHouseList()
+				.enqueue(object: Callback<HouseDto> {
+					override fun onResponse(call: Call<HouseDto>, response: Response<HouseDto>) {
+						if (response.isSuccessful.not()) {
+							// 실패 처리에 대한 구현
+							return
+						}
+
+						response.body()?.let { dto ->
+							updateMarker(dto.items)
+						}
+					}
+
+					override fun onFailure(call: Call<HouseDto>, t: Throwable) {
+						// 실패 처리에 대한 구현
+					}
+
+				})
+		}
+	}
+
+	private fun updateMarker(houses: List<HouseModel>) {
+		houses.forEach { house ->
+			val marker = Marker()
+			marker.position = LatLng(house.lat, house.lng)
+			// TODO: 마커 클릭 리스터
+			marker.map = naverMap
+			marker.tag = house.id
+			marker.icon = MarkerIcons.BLACK
+			marker.iconTintColor = Color.RED
+
 		}
 	}
 
