@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class PlayerFragment : Fragment(R.layout.fragment_player) {
 
 	private lateinit var binding: FragmentPlayerBinding
-	private var isWatchingPlayListView = true
+	private var model: PlayerModel = PlayerModel()
 	private var player: SimpleExoPlayer? = null
 	private lateinit var playListAdapter: PlayListAdapter
 
@@ -49,10 +49,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 			}
 		}
 		binding.skipNextImageView.setOnClickListener {
-
+			val nextMusic = model.nextMusic() ?: return@setOnClickListener
+			playMusic(nextMusic)
 		}
 		binding.skipPrevImageView.setOnClickListener {
-
+			val prevMusic = model.prevMusic() ?: return@setOnClickListener
+			playMusic(prevMusic)
 		}
 	}
 
@@ -72,13 +74,21 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 						playControlImageView.setImageResource(R.drawable.ic_baseline_play_arrow_48)
 					}
 				}
+
+				override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+					super.onMediaItemTransition(mediaItem, reason)
+
+					val newIndex = mediaItem?.mediaId ?: return
+					model.currentPosition = newIndex.toInt()
+					playListAdapter.submitList(model.getAdapterModels())
+				}
 			})
 		}
 	}
 
 	private fun initRecyclerView() {
 		playListAdapter = PlayListAdapter {
-			// TODO: 음악 재생
+			playMusic(it)
 		}
 
 		binding.playListRecyclerView.apply {
@@ -89,11 +99,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
 	private fun initPlayListButton() {
 		binding.playlistImageView.setOnClickListener {
-			// TODO: 서버에서 데이터가 다 불려오지 않은 상태일 때 예외처리
-			binding.playerViewGroup.isVisible = isWatchingPlayListView
-			binding.playListViewGroup.isVisible = isWatchingPlayListView.not()
+			if (model.currentPosition == -1) return@setOnClickListener
 
-			isWatchingPlayListView = !isWatchingPlayListView
+			binding.playerViewGroup.isVisible = model.isWatchingPlayListView
+			binding.playListViewGroup.isVisible = model.isWatchingPlayListView.not()
+
+			model.isWatchingPlayListView = !model.isWatchingPlayListView
 		}
 	}
 
@@ -111,12 +122,10 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
 						response.body()?.let { musicDto ->
 
-							val modelList = musicDto.musics.mapIndexed { index, musicEntity ->
-								musicEntity.mapper(index.toLong())
-							}
+							model = musicDto.mapper()
 
-							setMusicList(modelList)
-							playListAdapter.submitList(modelList)
+							setMusicList(model.getAdapterModels())
+							playListAdapter.submitList(model.getAdapterModels())
 
 						}
 					}
@@ -137,8 +146,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 			})
 
 			player?.prepare()
-			player?.play()
 		}
+	}
+
+	private fun playMusic(musicModel: MusicModel) {
+		model.updateCurrentPosition(musicModel)
+		player?.seekTo(model.currentPosition, 0)
+		player?.play()
 	}
 
 	companion object {
