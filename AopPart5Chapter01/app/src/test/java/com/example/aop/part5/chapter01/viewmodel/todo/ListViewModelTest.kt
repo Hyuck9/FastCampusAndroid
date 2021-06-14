@@ -61,4 +61,16 @@ internal class ListViewModelTest: ViewModelTest() {
 			)
 		)
 	}
+
+	// Test : 데이터를 업데이트 했을 때 잘 반영되는가
+	@Test
+	fun `test Item Update`(): Unit = runBlockingTest {
+		val todo = ToDoEntity(
+			id = 1,
+			title = "title 1",
+			description = "description 1",
+			hasCompleted = true
+		)
+		viewModel.updateEntity(todo)
+	}
 }

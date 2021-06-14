@@ -10,4 +10,8 @@ class DefaultToDoRepository: ToDoRepository {
 	override suspend fun insertToDoList(toDoList: List<ToDoEntity>) {
 		TODO("Not yet implemented")
 	}
+
+	override suspend fun updateToDoItem(toDoItem: ToDoEntity): Boolean {
+		TODO("Not yet implemented")
+	}
 }
