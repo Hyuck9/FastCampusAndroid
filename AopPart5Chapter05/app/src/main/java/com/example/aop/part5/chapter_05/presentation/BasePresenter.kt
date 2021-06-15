@@ -1,4 +1,4 @@
-package com.example.aop.part5.chapter_05.presenter
+package com.example.aop.part5.chapter_05.presentation
 
 import androidx.annotation.CallSuper
 import kotlinx.coroutines.CoroutineScope
