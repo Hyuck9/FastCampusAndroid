@@ -7,7 +7,7 @@ import com.example.aop.part5.chapter_05.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-	val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+	private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
