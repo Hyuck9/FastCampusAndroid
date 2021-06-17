@@ -8,6 +8,9 @@ import com.example.aop.part5.chapter_05.data.preference.PreferenceManager
 import com.example.aop.part5.chapter_05.data.preference.SharedPreferenceManager
 import com.example.aop.part5.chapter_05.data.repository.StationRepository
 import com.example.aop.part5.chapter_05.data.repository.StationRepositoryImpl
+import com.example.aop.part5.chapter_05.presentation.stations.StationsContract
+import com.example.aop.part5.chapter_05.presentation.stations.StationsFragment
+import com.example.aop.part5.chapter_05.presentation.stations.StationsPresenter
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Dispatchers
@@ -33,4 +36,8 @@ val appModule = module {
 	// Repository
 	single<StationRepository> { StationRepositoryImpl(get(), get(), get(), get()) }
 
+	// Presentation
+	scope<StationsFragment> {
+		scoped<StationsContract.Presenter> { StationsPresenter(getSource(), get()) }
+	}
 }

@@ -2,7 +2,6 @@ package com.example.aop.part5.chapter_05.data.repository
 
 import com.example.aop.part5.chapter_05.data.api.StationApi
 import com.example.aop.part5.chapter_05.data.db.StationDao
-import com.example.aop.part5.chapter_05.data.db.entity.StationSubwayCrossRefEntity
 import com.example.aop.part5.chapter_05.data.db.entity.mapper.toStations
 import com.example.aop.part5.chapter_05.data.preference.PreferenceManager
 import com.example.aop.part5.chapter_05.domain.Station
@@ -31,17 +30,7 @@ class StationRepositoryImpl(
 		val lastDatabaseUpdatedTimeMillis = preferenceManager.getLong(KEY_LAST_DATABASE_UPDATED_TIME_MILLIS)
 
 		if (lastDatabaseUpdatedTimeMillis == null || fileUpdatedTimeMillis > lastDatabaseUpdatedTimeMillis) {
-			val stationSubways = stationApi.getStationSubways()
-			stationDao.insertStations(stationSubways.map { it.first })
-			stationDao.insertSubways(stationSubways.map { it.second })
-			stationDao.insertCrossReferences(
-				stationSubways.map { (station, subway) ->
-					StationSubwayCrossRefEntity(
-						stationName = station.stationName,
-						subwayId = subway.subwayId
-					)
-				}
-			)
+			stationDao.insertStationSubways(stationApi.getStationSubways())
 			preferenceManager.putLong(KEY_LAST_DATABASE_UPDATED_TIME_MILLIS, fileUpdatedTimeMillis)
 		}
 	}

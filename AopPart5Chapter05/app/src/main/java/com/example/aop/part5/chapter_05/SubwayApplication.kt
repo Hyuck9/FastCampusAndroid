@@ -20,7 +20,7 @@ class SubwayApplication : Application() {
 				}
 			)
 			androidContext(this@SubwayApplication)
-			modules(appModule)
+			modules(listOf(appModule))
 		}
 	}
 }
