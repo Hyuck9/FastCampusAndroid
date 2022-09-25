@@ -1,2 +1,2 @@
-# PastCampusAndroid
-PastCampus Android Study Project
+# FastCampusAndroid
+FastCampus Android Study Project
