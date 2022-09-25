@@ -7,10 +7,19 @@ import com.example.aoppart5chapter02.data.network.provideProductRetrofit
 import com.example.aoppart5chapter02.data.repository.DefaultProductRepository
 import com.example.aoppart5chapter02.data.repository.ProductRepository
 import com.example.aoppart5chapter02.domain.GetProductItemUseCase
+import com.example.aoppart5chapter02.presentation.list.ProductListViewModel
+import com.example.aoppart5chapter02.presentation.main.MainViewModel
+import com.example.aoppart5chapter02.presentation.profile.ProfileViewModel
 import kotlinx.coroutines.Dispatchers
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+
+	// ViewModels
+	viewModel { MainViewModel() }
+	viewModel { ProductListViewModel() }
+	viewModel { ProfileViewModel() }
 
 	// Coroutines Dispatcher
 	single { Dispatchers.Main }
