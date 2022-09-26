@@ -9,11 +9,11 @@ interface ProductRepository {
 
 	suspend fun getLocalProductList(): List<ProductEntity>
 
-	suspend fun insertProductItem(ProductItem: ProductEntity): Long
+	suspend fun insertProductItem(productItem: ProductEntity): Long
 
-	suspend fun insertProductList(ProductList: List<ProductEntity>)
+	suspend fun insertProductList(productList: List<ProductEntity>)
 
-	suspend fun updateProductItem(ProductItem: ProductEntity)
+	suspend fun updateProductItem(productItem: ProductEntity)
 
 	suspend fun getProductItem(itemId: Long): ProductEntity?
 

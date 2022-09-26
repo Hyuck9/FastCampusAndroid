@@ -1,5 +1,6 @@
 package com.example.aop.part5.chapter02.data.repository
 
+import com.example.aop.part5.chapter02.data.db.dao.ProductDao
 import com.example.aop.part5.chapter02.data.entity.product.ProductEntity
 import com.example.aop.part5.chapter02.data.network.ProductApiService
 import kotlinx.coroutines.CoroutineDispatcher
@@ -7,7 +8,8 @@ import kotlinx.coroutines.withContext
 
 class DefaultProductRepository(
 	private val productApi: ProductApiService,
-	private val ioDispatcher: CoroutineDispatcher
+	private val ioDispatcher: CoroutineDispatcher,
+	private val productDao: ProductDao
 ): ProductRepository {
 
 	override suspend fun getProductList(): List<ProductEntity> = withContext(ioDispatcher) {
@@ -23,20 +25,25 @@ class DefaultProductRepository(
 		TODO("Not yet implemented")
 	}
 
-	override suspend fun insertProductItem(ProductItem: ProductEntity): Long = withContext(ioDispatcher) {
+	override suspend fun insertProductItem(productItem: ProductEntity): Long = withContext(ioDispatcher) {
+		productDao.insert(productItem)
+	}
+
+	override suspend fun insertProductList(productList: List<ProductEntity>) = withContext(ioDispatcher) {
 		TODO("Not yet implemented")
 	}
 
-	override suspend fun insertProductList(ProductList: List<ProductEntity>) = withContext(ioDispatcher) {
-		TODO("Not yet implemented")
-	}
-
-	override suspend fun updateProductItem(ProductItem: ProductEntity) = withContext(ioDispatcher) {
+	override suspend fun updateProductItem(productItem: ProductEntity) = withContext(ioDispatcher) {
 		TODO("Not yet implemented")
 	}
 
 	override suspend fun getProductItem(itemId: Long): ProductEntity? = withContext(ioDispatcher) {
-		TODO("Not yet implemented")
+		val response = productApi.getProduct(itemId)
+		return@withContext if (response.isSuccessful) {
+			response.body()?.toEntity()
+		} else {
+			null
+		}
 	}
 
 	override suspend fun deleteAll() = withContext(ioDispatcher) {

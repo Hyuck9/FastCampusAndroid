@@ -1,7 +1,6 @@
 package com.example.aop.part5.chapter02.presentation.base
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.Job
