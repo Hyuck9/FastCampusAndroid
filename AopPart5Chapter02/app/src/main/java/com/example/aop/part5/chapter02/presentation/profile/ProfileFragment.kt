@@ -9,7 +9,9 @@ import com.example.aop.part5.chapter02.R
 import com.example.aop.part5.chapter02.databinding.FragmentProfileBinding
 import com.example.aop.part5.chapter02.extensions.loadCenterCrop
 import com.example.aop.part5.chapter02.extensions.toast
+import com.example.aop.part5.chapter02.presentation.adapter.ProductListAdapter
 import com.example.aop.part5.chapter02.presentation.base.BaseFragment
+import com.example.aop.part5.chapter02.presentation.detail.ProductDetailActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -48,6 +50,8 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
 		}
 	}
 
+	private val adapter = ProductListAdapter()
+
 	override fun observeData() = viewModel.profileStateLiveData.observe(this) {
 		when (it) {
 			is ProfileState.UnInitialized -> initViews()
@@ -59,11 +63,12 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
 	}
 
 	private fun initViews() = with(binding) {
+		recyclerView.adapter = adapter
 		loginButton.setOnClickListener {
 			signInGoogle()
 		}
 		logoutButton.setOnClickListener {
-
+			viewModel.signOut()
 		}
 	}
 
@@ -73,6 +78,7 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
 	}
 
 	private fun handleLoginState(state: ProfileState.Login) = with(binding) {
+		binding.progressBar.isVisible = true
 		val credential = GoogleAuthProvider.getCredential(state.idToken, null)
 		firebaseAuth.signInWithCredential(credential)
 			.addOnCompleteListener(requireActivity()) { task ->
@@ -110,6 +116,11 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
 		} else {
 			emptyResultTextView.isGone = true
 			recyclerView.isGone = false
+			adapter.setProductList(state.productList) {
+				startActivity(
+					ProductDetailActivity.newIntent(requireContext(), it.id)
+				)
+			}
 		}
 	}
 

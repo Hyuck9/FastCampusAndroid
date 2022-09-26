@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.aop.part5.chapter02.data.preference.PreferenceManager
+import com.example.aop.part5.chapter02.domain.DeleteOrderedProductListUseCase
+import com.example.aop.part5.chapter02.domain.GetOrderedProductListUseCase
 import com.example.aop.part5.chapter02.presentation.base.BaseViewModel
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +14,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 internal class ProfileViewModel(
-	private val preferenceManager: PreferenceManager
+	private val preferenceManager: PreferenceManager,
+	private val getOrderedProductListUseCase: GetOrderedProductListUseCase,
+	private val deleteOrderedProductListUseCase: DeleteOrderedProductListUseCase
 ): BaseViewModel() {
 
 	private val _profileStateLiveData = MutableLiveData<ProfileState>(ProfileState.UnInitialized)
@@ -48,7 +52,7 @@ internal class ProfileViewModel(
 				ProfileState.Success.Registered(
 					user.displayName ?: "익명",
 					user.photoUrl,
-					listOf()
+					getOrderedProductListUseCase()
 				)
 			)
 		} ?: kotlin.run {
@@ -56,6 +60,14 @@ internal class ProfileViewModel(
 				ProfileState.Success.NotRegistered
 			)
 		}
+	}
+
+	fun signOut() = viewModelScope.launch {
+		withContext(Dispatchers.IO) {
+			preferenceManager.removeIdToken()
+		}
+		deleteOrderedProductListUseCase()
+		fetchData()
 	}
 
 }

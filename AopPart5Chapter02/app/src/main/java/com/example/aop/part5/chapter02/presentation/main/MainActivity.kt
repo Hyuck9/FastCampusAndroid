@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import com.example.aop.part5.chapter02.R
 import com.example.aop.part5.chapter02.databinding.ActivityMainBinding
 import com.example.aop.part5.chapter02.presentation.base.BaseActivity
+import com.example.aop.part5.chapter02.presentation.base.BaseFragment
 import com.example.aop.part5.chapter02.presentation.list.ProductListFragment
 import com.example.aop.part5.chapter02.presentation.profile.ProfileFragment
 import org.koin.android.ext.android.inject
@@ -58,7 +59,7 @@ internal class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>()
 			is MainState.RefreshOrderList -> {
 				binding.bottomNav.selectedItemId = R.id.menu_profile
 				val fragment = supportFragmentManager.findFragmentByTag(ProfileFragment.TAG)
-				// TODO: fragment BaseFragment 타입 캐스팅 fetchData()
+				(fragment as? BaseFragment<*, *>)?.viewModel?.fetchData()
 			}
 		}
 	}

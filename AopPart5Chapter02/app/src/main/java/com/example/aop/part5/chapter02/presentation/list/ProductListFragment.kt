@@ -22,7 +22,6 @@ internal class ProductListFragment: BaseFragment<ProductListViewModel, FragmentP
 
 	private val startProductDetailForResult =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-			// TODO: 성공적으로 처리 완료 이후 동작
 			if (result.resultCode == ProductDetailActivity.PRODUCT_ORDERED_RESULT_CODE) {
 				(requireActivity() as MainActivity).viewModel.refreshOrderList()
 			}
